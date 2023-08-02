@@ -5,6 +5,8 @@ import { prisma } from '@/lib/prisma';
 import { Activity } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { userAgent } from 'next/server';
+import { ActivityDuration } from './duration';
+import { Play, PauseIcon } from 'lucide-react'
 
 type NewActivityProps = {
   activity?: Activity | null
@@ -15,19 +17,6 @@ type TimeProps = {
   startAt: string,
 }
 
-const Time = ({ startAt }: TimeProps) => {
-  const date = new Date(startAt)
-  const now = new Date()
-  const elpsed = now.getTime() - date.getTime()
-
-  // to locale time string
-
-  return (
-    <div>
-      {elpsed}
-    </div>
-  )
-}
 
 
 const NewActivity = ({ activity }: NewActivityProps) => {
@@ -72,13 +61,19 @@ const NewActivity = ({ activity }: NewActivityProps) => {
 
   return (
     <div>
-      <h2>What are you working on?</h2>
-      <form action={activity ? stopActivity : startActivity} className='flex items-center space-x-4 '>
-        <Input type='text' name="name" defaultValue={activity?.name || ''} />
-        <input type="hidden" name="id" defaultValue={activity?.id || ''} />
-
-        {activity && <Time startAt={activity?.startAt} />}
-        <Button type='submit'>{activity ? 'Stop' : 'Start'}</Button>
+      <h2 className='font-semibold mb-2'>What are you working on?</h2>
+      <form
+        action={activity ? stopActivity : startActivity}
+        className=''
+      >
+        <div className="flex items-center space-x-4">
+          <Input type='text' name="name" defaultValue={activity?.name || ''} />
+          <input type="hidden" name="id" defaultValue={activity?.id || ''} />
+          {activity && <><ActivityDuration startAt={activity?.startAt} /> </>}
+          <Button type='submit'
+            variant='ghost'
+          >{activity ? <PauseIcon size={24} /> : <Play size={24} />}</Button>
+        </div>
       </form>
     </div>
   );
