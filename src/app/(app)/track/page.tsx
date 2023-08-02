@@ -6,8 +6,9 @@ import { Activity } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { userAgent } from 'next/server';
 import { ActivityDuration } from './duration';
-import { Play, PauseIcon, ArrowRight } from 'lucide-react'
+import { Play, PauseIcon, ArrowRight, Pause } from 'lucide-react'
 import { ActivityItemRow } from './activity-item-row';
+import { cn } from '@/lib/utils';
 
 type NewActivityProps = {
   activity?: Activity | null
@@ -58,18 +59,21 @@ const NewActivity = ({ activity }: NewActivityProps) => {
 
   return (
     <div>
-      <h2 className='text-lg font-bold mb-2'>What are you working on?</h2>
-      <form
-        action={activity ? stopActivity : startActivity}
-        className=''
-      >
+      <h2 className="text-lg font-medium mb-2">What are you working on?</h2>
+      <form action={activity ? stopActivity : startActivity} className="">
         <div className="flex items-center space-x-4">
-          <Input type='text' name="name" defaultValue={activity?.name || ''} />
+          <Input type="text" name="name" defaultValue={activity?.name || ''} />
           <input type="hidden" name="id" defaultValue={activity?.id || ''} />
+
           {activity && <><ActivityDuration startAt={activity?.startAt} /> </>}
-          <Button type='submit'
-            variant='ghost'
-          >{activity ? <PauseIcon size={24} /> : <Play size={24} />}</Button>
+
+          <Button
+            type="submit"
+            variant="outline"
+            className={cn('rounded-full px-2 h-[40px] w-[40px]')}
+          >
+            {activity ? <Pause size={20} /> : <Play size={20} />}
+          </Button>
         </div>
       </form>
     </div>
@@ -81,22 +85,16 @@ type DailyActivityProps = {
 }
 
 const DailyActivity = ({ activities }: DailyActivityProps) => {
-
-
   return (
-    <div className='mt-8'>
-      <h2 className='text-lg font-bold mb-2'>What you've done today.</h2>
-      <ul >
-        {
-          activities.map(activity => (
-            <ActivityItemRow activity={activity} key={activity.id} />
-          ))
-        }
+    <div>
+      <h2 className="text-lg font-medium mb-2">What you&apos;ve done today.</h2>
+      <ul>
+        {activities.map((activity) => (
+          <ActivityItemRow activity={activity} key={activity.id} />
+        ))}
       </ul>
     </div>
   )
-
-
 }
 
 
@@ -140,10 +138,14 @@ export default async function TrackPage() {
   })
 
   return (
-    <div className="mx-auto container py-4">
-      <NewActivity activity={currentActivity} />
+    <div className="mx-auto container py-4 space-y-12">
+     <NewActivity
+        activity={currentActivity}
+        // clients={clients}
+        // projects={projects}
+      />
       <DailyActivity activities={dailyActivities} />
     </div>
   );
-  
+
 }
