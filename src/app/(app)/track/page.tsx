@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { userAgent } from 'next/server';
 import { ActivityDuration } from './duration';
 import { Play, PauseIcon, ArrowRight } from 'lucide-react'
+import { ActivityItemRow } from './activity-item-row';
 
 type NewActivityProps = {
   activity?: Activity | null
@@ -16,7 +17,6 @@ type NewActivityProps = {
 type TimeProps = {
   startAt: string,
 }
-
 
 
 const NewActivity = ({ activity }: NewActivityProps) => {
@@ -89,35 +89,7 @@ const DailyActivity = ({ activities }: DailyActivityProps) => {
       <ul >
         {
           activities.map(activity => (
-            <li key={activity.id} className='py-2 space-x-2 flex items-center' >
-
-              <span className='w-1/3'>{activity.name}</span>
-
-              <div className='flex gap-2 items-center'>
-                <span>
-                  {
-                    new Intl.DateTimeFormat(undefined, {
-                      hour: 'numeric',
-                      minute: 'numeric',
-                    }).format(activity.startAt)
-                  }
-                </span>
-
-                <ArrowRight />
-
-
-
-                <span>
-                  {
-                    new Intl.DateTimeFormat(undefined, {
-                      hour: 'numeric',
-                      minute: 'numeric',
-                    }).format(activity.endAt || new Date())
-                  }
-                </span>
-
-              </div>
-            </li>
+            <ActivityItemRow activity={activity} key={activity.id} />
           ))
         }
       </ul>
@@ -167,12 +139,11 @@ export default async function TrackPage() {
     }
   })
 
-
-
   return (
     <div className="mx-auto container py-4">
       <NewActivity activity={currentActivity} />
       <DailyActivity activities={dailyActivities} />
     </div>
   );
+  
 }

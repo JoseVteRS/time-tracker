@@ -1,12 +1,13 @@
 'use client'
 
+import { pad } from "@/lib/utils"
 import { useEffect, useState } from "react"
 
 type Props = {
     startAt: Date,
 }
 
-const pad = (n: number) => n.toString().padStart(2, '0')
+
 
 
 export const ActivityDuration = ({ startAt }: Props) => {
