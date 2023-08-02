@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { getServerSession } from "next-auth";
 import { getUserSession } from "@/lib/auth";
+import { Avatar } from "@/components/avatar";
 
 const links = [
     { href: '/track', label: 'Track' },
@@ -33,10 +32,7 @@ export async function NavBar() {
 
                 <span className="flex-grow" />
 
-                <Avatar>
-                    <AvatarImage src={user.image} referrerPolicy="no-referrer" />
-                    <AvatarFallback>{ user.name.split('')[0] }</AvatarFallback>
-                </Avatar>
+                <Avatar user={user} />
 
             </div>
         </div>
