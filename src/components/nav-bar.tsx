@@ -4,6 +4,7 @@ import { Avatar } from "@/components/avatar";
 
 const links = [
     { href: '/track', label: 'Track' },
+    { href: '/clients', label: 'Clients' },
 ]
 
 export async function NavBar() {
@@ -17,7 +18,7 @@ export async function NavBar() {
                     <span className="font-semibold">Time Tracker</span>
                 </Link>
                 <nav>
-                    <ul>
+                    <ul className="flex items-center gap-2">
                         {
                             links.map(({ href, label }) => (
                                 <li key={href} className="py-1 px-2 hover:bg-slate-100 text-sky-600 hover:text-sky-800 transition" >
