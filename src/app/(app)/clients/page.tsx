@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getUserSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { ClientList } from "./client-list";
+import { ClientList, ClientListHeader } from "./clients";
 
 
 
@@ -17,7 +17,7 @@ const Blankslate = () => {
             <Button asChild>
                 <Link href="/clients/new" > Create </Link>
             </Button>
-            {/* <Button variant="">Create</Button> */}
+            
         </div>
     )
 }
@@ -35,7 +35,7 @@ export default async function ClientPage() {
 
     return (
         <div className="mx-auto container py-4">
-            <h2 className="text-lg font-medium mb-2">Clients</h2>
+           <ClientListHeader />
             {clients.length > 0 ? <ClientList clients={clients} /> : <Blankslate />}
         </div>
     );

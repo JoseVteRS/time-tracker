@@ -1,8 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { redirect } from "next/navigation";
+import {revalidatePath} from "next/cache";
 import { getUserSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
 
 export default async function NewClientPage() {
     const user = await getUserSession();
@@ -17,7 +19,7 @@ export default async function NewClientPage() {
                 color: data.get('color') as string,
             }
         })
-
+        revalidatePath('/clients')
         redirect('/clients')
     }
 

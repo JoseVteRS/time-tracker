@@ -1,5 +1,5 @@
 import { getUserSession } from "@/lib/auth";
-import { ClientList } from "../client-list";
+import { ClientList, ClientListHeader } from "../clients";
 import { prisma } from "@/lib/prisma";
 
 
@@ -16,8 +16,9 @@ export default async function ClientLayout({ children }: { children: React.React
     })
 
     return (
-        <div className="container mx-auto flex gap-4 divide-x-4-">
+        <div className="container mx-auto flex gap-4 divide-x-2 py-4 h-screen">
             <div className="w-1/2">
+                <ClientListHeader />
                 <ClientList clients={clients} />
             </div>
 
