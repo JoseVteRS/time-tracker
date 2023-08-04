@@ -1,5 +1,16 @@
 import { getUserSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuItem
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 type ClientDetailProps = {
     params: {
@@ -18,12 +29,27 @@ export default async function ClientPage({ params }: ClientDetailProps) {
 
 
     if (!client) {
-        return <div>Client not found</div>
+       return redirect('/clients')
     }
 
     return (
         <div className="mx-auto container py-4">
-            <h2 className="text-lg font-medium mb-2" >Client</h2>
+            <div className="flex justify-between w-full items-center">
+                <h2 className="text-lg font-medium mb-2" >Client</h2>
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <MoreHorizontal />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuItem>
+                            <Link href={`/clients/${client.id}/edit`}>
+                                Edit
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-500" >Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
             <h3>{client.name}</h3>
         </div>
     );

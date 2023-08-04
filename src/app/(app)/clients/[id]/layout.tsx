@@ -22,7 +22,7 @@ export default async function ClientLayout({ children }: { children: React.React
                 <ClientList clients={clients} />
             </div>
 
-            <div> {children}  </div>
+            <div className="px-4 w-full"> {children}  </div>
         </div>
     );
 }
