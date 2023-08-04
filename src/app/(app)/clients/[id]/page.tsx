@@ -35,7 +35,7 @@ export default async function ClientPage({ params }: ClientDetailProps) {
     return (
         <div className="mx-auto container py-4">
             <div className="flex justify-between w-full items-center">
-                <h2 className="text-lg font-medium mb-2" >Client</h2>
+                <h2 className="text-lg font-medium mb-2" >client</h2>
                 <DropdownMenu>
                     <DropdownMenuTrigger>
                         <MoreHorizontal />
