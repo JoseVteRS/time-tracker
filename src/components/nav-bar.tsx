@@ -5,6 +5,7 @@ import { Avatar } from "@/components/avatar";
 const links = [
     { href: '/track', label: 'Track' },
     { href: '/clients', label: 'Clients' },
+    { href: '/projects', label: 'Projects' },
 ]
 
 export async function NavBar() {
