@@ -4,9 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 
 export default async function ClientLayout({ children }: { children: React.ReactNode }) {
-
     const user = await getUserSession();
-
     const clients = await prisma.client.findMany({
         where: {
             tenantId: user?.tenantId,
