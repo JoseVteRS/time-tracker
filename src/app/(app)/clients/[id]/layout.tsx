@@ -3,8 +3,6 @@ import { ClientList, ClientListHeader } from "../clients";
 import { prisma } from "@/lib/prisma";
 
 
-
-
 export default async function ClientLayout({ children }: { children: React.ReactNode }) {
 
     const user = await getUserSession();
