@@ -39,7 +39,7 @@ export default async function ClientPage({ params }: ClientDetailProps) {
         'use server'
         if (!client) return redirect('/clients')
 
-        console.log('delete client')
+        
 
         await prisma.client.deleteMany({
             where: {
