@@ -48,9 +48,7 @@ export default async function ProjectDetailPage({ params }: Params) {
     }
 
 
-    if (!project) {
-        throw notFound()
-    };
+    if (!project) notFound()
 
     // await sleep(1500);
 
