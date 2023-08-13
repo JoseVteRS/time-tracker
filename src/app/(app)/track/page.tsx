@@ -20,30 +20,30 @@ type NewActivityProps = {
 
 const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
 
-  async function startActivity(data: FormData) {
-    "use server"
-
+  async function upsertctivity(data: FormData) {
+    'use server'
     const user = await getUserSession()
+    const client = data.get('client') as string
+    const project = data.get('project') as string
 
-    await prisma.activity.create({
-      data: {
+    await prisma.activity.upsert({
+      where: {
+        id: data.get('id') as string
+      },
+      create: {
         user: { connect: { id: user.id } },
         tenant: { connect: { id: user.tenant.id } },
         name: data.get('name') as string,
         startAt: new Date(),
-        client: {
-          connect: {
-            id: data.get('client') as string
-          }
-        },
-        project: {
-          connect: {
-            id: data.get('project') as string
-          }
-        }
+        client: !!client ? { connect: { id: client } } : undefined,
+        project: !!project ? { connect: { id: project } } : undefined
+      },
+      update: {
+        name: data.get('name') as string,
+        client: !!client ? { connect: { id: client } } : undefined,
+        project: !!project ? { connect: { id: project } } : undefined
       }
     })
-
     revalidatePath('/track')
 
   }
@@ -51,6 +51,10 @@ const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
 
   async function stopActivity(data: FormData) {
     'use server'
+
+    const client = data.get('client') as string
+    const project = data.get('project') as string
+
     if (!activity) return
 
     await prisma.activity.update({
@@ -58,7 +62,10 @@ const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
         id: data.get('id') as string
       },
       data: {
-        endAt: new Date()
+        endAt: new Date(),
+        name: data.get('name') as string,
+        client: !!client ? { connect: { id: client } } : undefined,
+        project: !!project ? { connect: { id: project } } : undefined
       }
     })
 
@@ -69,7 +76,7 @@ const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
   return (
     <div>
       <h2 className="text-lg font-medium mb-2">What are you working on?</h2>
-      <form action={activity ? stopActivity : startActivity} className="">
+      <form action={activity ? stopActivity : upsertctivity} className="">
         <div className="flex items-center space-x-4">
           <Input type="text" name="name" defaultValue={activity?.name || ''} />
           <input type="hidden" name="id" defaultValue={activity?.id || ''} />
