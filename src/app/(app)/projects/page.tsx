@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { getUserSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { ProjectList } from "./projects";
+import { getUserSession } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
 
 
 const Blankslate = () => {
@@ -23,20 +23,25 @@ const Blankslate = () => {
 }
 
 
-export default async function ProjectPage() {
+export default async function ProjectsPage() {
     const user = await getUserSession();
     const projects = await prisma.project.findMany({
         where: {
             tenantId: user.tenant.id,
         },
         orderBy: {
-            createdAt: "desc"
+            createdAt: "asc"
         }
     })
 
+    if (projects.length > 0) {
+        redirect(`/projects/${projects[0].id}`)
+    }
+
+
     return (
         <div className="mx-auto container py-4">
-            {projects.length > 0 ? <ProjectList projects={projects} /> : <Blankslate />}
+            {<Blankslate />}
         </div>
     );
 }

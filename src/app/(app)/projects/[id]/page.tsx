@@ -14,94 +14,94 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 
 type Params = {
-    params: { id: string; }
+	params: { id: string; }
 };
 
 export default async function ProjectDetailPage({ params }: Params) {
 
 
-    const user = await getUserSession()
-    const project = await prisma.project.findUnique({
-        where: {
-            tenantId: user.tenant.id,
-            id: params.id
-        },
-        include: {
-            client: true,
-        }
-    })
+	const user = await getUserSession()
+	const project = await prisma.project.findUnique({
+		where: {
+			tenantId: user.tenant.id,
+			id: params.id
+		},
+		include: {
+			client: true,
+		}
+	})
 
 
-    async function deleteProject() {
-        'use server'
-        if (!project) notFound()
+	async function deleteProject() {
+		'use server'
+		if (!project) notFound()
 
-        await prisma.project.deleteMany({
-            where: {
-                tenantId: user.tenant.id,
-                id: params.id
-            }
-        })
+		await prisma.project.deleteMany({
+			where: {
+				tenantId: user.tenant.id,
+				id: params.id
+			}
+		})
 
-        revalidatePath('/projects')
-        redirect('/projects')
-    }
-
-
-    if (!project) notFound()
-
-    // await sleep(1500);
-
-    return (
-        <div>
-            <div className="flex justify-between items-center">
-                <h1>Project details</h1>
-                <Dialog>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger>
-                            <MoreHorizontal />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
+		revalidatePath('/projects')
+		redirect('/projects')
+	}
 
 
-                            <DropdownMenuItem>
-                                <Link href={`/projects/${project.id}/edit`}>
-                                    Edit
-                                </Link>
-                            </DropdownMenuItem>
+	if (!project) notFound()
+
+	// await sleep(1500);
+
+	return (
+		<div>
+			<div className="flex justify-between items-center">
+				<h2 className="text-2xl">Project details</h2>
+				<Dialog>
+					<DropdownMenu>
+						<DropdownMenuTrigger>
+							<MoreHorizontal />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
 
 
-                            <DialogTrigger asChild >
-                                <DropdownMenuItem className="text-red-500" >Delete</DropdownMenuItem>
-                            </DialogTrigger>
-                        </DropdownMenuContent>
+							<DropdownMenuItem>
+								<Link href={`/projects/${project.id}/edit`}>
+									Edit
+								</Link>
+							</DropdownMenuItem>
 
-                        <DialogContent>
-                            <DialogHeader>Do you want to delete this project?</DialogHeader>
-                            <DialogDescription>
-                                This action cannot be undone. Are you sure you want to permanently delete this project?
-                            </DialogDescription>
 
-                            <DialogFooter>
-                                <form action={deleteProject}>
-                                    <Button type="submit" variant="destructive">Delete</Button>
-                                </form>
-                            </DialogFooter>
+							<DialogTrigger asChild >
+								<DropdownMenuItem className="text-red-500" >Delete</DropdownMenuItem>
+							</DialogTrigger>
+						</DropdownMenuContent>
 
-                        </DialogContent>
-                    </DropdownMenu>
+						<DialogContent>
+							<DialogHeader>Do you want to delete this project?</DialogHeader>
+							<DialogDescription>
+								This action cannot be undone. Are you sure you want to permanently delete this project?
+							</DialogDescription>
 
-                </Dialog>
-            </div>
-            <div>{project.name}</div>
+							<DialogFooter>
+								<form action={deleteProject}>
+									<Button type="submit" variant="destructive">Delete</Button>
+								</form>
+							</DialogFooter>
 
-            {project.client && (
-                <div>
-                    <h2>Client</h2>
-                    <div>{project.client.name}</div>
-                </div>
-            )}
+						</DialogContent>
+					</DropdownMenu>
 
-        </div>
-    );
+				</Dialog>
+			</div>
+			<div>{project.name}</div>
+
+			{project.client && (
+				<div>
+					<h2 className='font-semibold mt-3'>Client</h2>
+					<div>{project.client.name}</div>
+				</div>
+			)}
+
+		</div>
+	);
 } 
