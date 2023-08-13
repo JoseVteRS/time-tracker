@@ -5,65 +5,65 @@ import GoogleProvider from "next-auth/providers/google";
 import { session } from "@/lib/auth"
 
 const authOptions: NextAuthOptions = {
-    session: {
-        strategy: 'jwt'
-    },
-    providers: [
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID || '',
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || ''
-        })
-    ],
-    callbacks: {
-        async signIn({ account, profile }) {
+  session: {
+    strategy: 'jwt'
+  },
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || ''
+    })
+  ],
+  callbacks: {
+    async signIn({ account, profile }) {
 
-            if (!profile?.email) throw new Error('No profile')
+      if (!profile?.email) throw new Error('No profile')
 
-            const user = await prisma.user.upsert({
-                where: {
-                    email: profile.email
-                },
-                create: {
-                    email: profile.email,
-                    name: profile.name,
-                    avatar: (profile as any).picture,
-                    tenant: {
-                        create: {}
-                    }
-                },
-                update: {
-                    name: profile.name,
-                    avatar: (profile as any).picture,
-                }
-            })
-
-            return true;
+      const user = await prisma.user.upsert({
+        where: {
+          email: profile.email
         },
-
-        session,
-
-        async jwt({ token, user, account, profile }) {
-
-            if (profile) {
-
-                const user = await prisma.user.findUnique({
-                    where: {
-                        email: profile.email
-                    }
-                })
-
-                if (!user) throw new Error('User not found')
-
-                token.id = user.id
-                token.tenant = {
-                    id: user.tenantId,
-                }
-
-            }
-
-            return token
+        create: {
+          email: profile.email,
+          name: profile.name,
+          avatar: (profile as any).picture,
+          tenant: {
+            create: {}
+          }
+        },
+        update: {
+          name: profile.name,
+          avatar: (profile as any).picture,
         }
+      })
+
+      return true;
+    },
+
+    session,
+
+    async jwt({ token, user, account, profile }) {
+
+      if (profile) {
+
+        const user = await prisma.user.findUnique({
+          where: {
+            email: profile.email
+          }
+        })
+
+        if (!user) throw new Error('User not found')
+
+        token.id = user.id
+        token.tenant = {
+          id: user.tenantId,
+        }
+
+      }
+
+      return token
     }
+  }
 }
 
 

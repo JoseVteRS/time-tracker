@@ -2,25 +2,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input'
 import { getUserSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { Activity } from '@prisma/client';
+import { Activity, Client, Project } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { userAgent } from 'next/server';
 import { ActivityDuration } from './duration';
-import { Play, PauseIcon, ArrowRight, Pause } from 'lucide-react'
+import { Play, PauseIcon, ArrowRight, Pause, Building2, FolderOpenDot } from 'lucide-react'
 import { ActivityItemRow } from './activity-item-row';
 import { cn } from '@/lib/utils';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type NewActivityProps = {
   activity?: Activity | null
+  clients: Client[]
+  projects: Project[]
 }
 
 
-type TimeProps = {
-  startAt: string,
-}
-
-
-const NewActivity = ({ activity }: NewActivityProps) => {
+const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
 
   async function startActivity(data: FormData) {
     "use server"
@@ -33,6 +31,16 @@ const NewActivity = ({ activity }: NewActivityProps) => {
         tenant: { connect: { id: user.tenant.id } },
         name: data.get('name') as string,
         startAt: new Date(),
+        client: {
+          connect: {
+            id: data.get('client') as string
+          }
+        },
+        project: {
+          connect: {
+            id: data.get('project') as string
+          }
+        }
       }
     })
 
@@ -43,6 +51,7 @@ const NewActivity = ({ activity }: NewActivityProps) => {
 
   async function stopActivity(data: FormData) {
     'use server'
+    if (!activity) return
 
     await prisma.activity.update({
       where: {
@@ -65,7 +74,41 @@ const NewActivity = ({ activity }: NewActivityProps) => {
           <Input type="text" name="name" defaultValue={activity?.name || ''} />
           <input type="hidden" name="id" defaultValue={activity?.id || ''} />
 
-          {activity && <><ActivityDuration startAt={activity?.startAt} /> </>}
+          <Select name="client">
+            <SelectTrigger className="w-[50px]">
+              <Building2 size={32} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Client</SelectLabel>
+                <SelectItem value="">None</SelectItem>
+                {clients.map((client) => (
+                  <SelectItem value={client.id} key={client.id}>
+                    {client.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <Select name="project">
+            <SelectTrigger className="w-[50px]">
+              <FolderOpenDot size={32} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Client</SelectLabel>
+                <SelectItem value="">None</SelectItem>
+                {projects.map((client) => (
+                  <SelectItem value={client.id} key={client.id}>
+                    {client.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          {activity && <ActivityDuration startAt={activity?.startAt} />}
 
           <Button
             type="submit"
@@ -99,7 +142,6 @@ const DailyActivity = ({ activities }: DailyActivityProps) => {
 
 
 export default async function TrackPage() {
-
   const user = await getUserSession();
 
   const currentActivity = await prisma.activity.findFirst({
@@ -109,6 +151,19 @@ export default async function TrackPage() {
       endAt: null
     }
   })
+
+  const clients = await prisma.client.findMany({
+    where: {
+      tenantId: user.tenant.id,
+    }
+  })
+
+  const projects = await prisma.project.findMany({
+    where: {
+      tenantId: user.tenant.id,
+    }
+  })
+
 
   const now = new Date()
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -139,11 +194,7 @@ export default async function TrackPage() {
 
   return (
     <div className="mx-auto container py-4 space-y-12">
-     <NewActivity
-        activity={currentActivity}
-        // clients={clients}
-        // projects={projects}
-      />
+      <NewActivity activity={currentActivity} clients={clients} projects={projects} />
       <DailyActivity activities={dailyActivities} />
     </div>
   );
