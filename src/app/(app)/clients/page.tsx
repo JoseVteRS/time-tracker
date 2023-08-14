@@ -29,7 +29,7 @@ export default async function ClientPage() {
     const user = await getUserSession();
     const clients = await prisma.client.findMany({
         where: {
-            tenantId: user?.tenantId,
+            tenantId: user.tenant.id,
         }
     })
 
