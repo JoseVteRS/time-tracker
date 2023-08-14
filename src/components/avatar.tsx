@@ -42,12 +42,12 @@ export const Avatar = ({ user }: { user: Session['user'] }) => {
                     <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                        <Link className="w-full" href="/profile" >
+                        <Link className="w-full" href="/admin/profile" >
                             Profile
                         </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Billing</DropdownMenuItem>
                     <DropdownMenuItem>Team</DropdownMenuItem>
+                    <DropdownMenuItem>Billing</DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <Logout />
                 </DropdownMenuContent>
